@@ -81,7 +81,16 @@ func (r *PresentationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presentation) error {
 	desiredConfigMap := r.configMap(config.Spec.Content)
 	desiredConfigMap.Namespace = "default"
-
+	isController := true
+	desiredConfigMap.OwnerReferences = []metav1.OwnerReference{
+		{
+			Kind:       config.Kind,
+			APIVersion: config.APIVersion,
+			Name:       config.Name,
+			UID:        config.GetUID(),
+			Controller: &isController,
+		},
+	}
 	key, err := client.ObjectKeyFromObject(desiredConfigMap)
 	if err != nil {
 		return err
@@ -107,6 +116,15 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 	r.Log.Info("configmap reconciled")
 
 	desiredDeployment := r.deployment(int32(config.Spec.Replicas))
+	desiredDeployment.OwnerReferences = []metav1.OwnerReference{
+		{
+			Kind:       config.Kind,
+			APIVersion: config.APIVersion,
+			Name:       config.Name,
+			UID:        config.GetUID(),
+			Controller: &isController,
+		},
+	}
 	key, err = client.ObjectKeyFromObject(desiredDeployment)
 	if err != nil {
 		return err
@@ -132,7 +150,15 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 	r.Log.Info("deployment reconciled")
 
 	desiredService := r.service(int32(config.Spec.ServicePort))
-
+	desiredService.OwnerReferences = []metav1.OwnerReference{
+		{
+			Kind:       config.Kind,
+			APIVersion: config.APIVersion,
+			Name:       config.Name,
+			UID:        config.GetUID(),
+			Controller: &isController,
+		},
+	}
 	key, err = client.ObjectKeyFromObject(desiredService)
 	if err != nil {
 		return err
