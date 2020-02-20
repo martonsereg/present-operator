@@ -47,7 +47,7 @@ type PresentationReconciler struct {
 // +kubebuilder:rbac:groups=example.meetup.com,resources=presentations,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=example.meetup.com,resources=presentations/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups="apps",resources=deployments,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups="",resources=services;configmaps,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=services;configmaps;pods,verbs=get;list;watch;create;update;patch;delete
 
 func (r *PresentationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	_ = context.Background()
@@ -116,6 +116,22 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 		if !reflect.DeepEqual(desiredConfigMap, currentConfigMap) {
 			if err := r.Update(context.TODO(), desiredConfigMap); err != nil {
 				return err
+			}
+			if !reflect.DeepEqual(desiredConfigMap.Data, currentConfigMap.Data) {
+				pods := &apiv1.PodList{}
+				err := r.List(context.TODO(), pods, client.MatchingLabels(labels))
+				if err != nil {
+					return err
+				}
+				r.Log.Info("found pods", "len", len(pods.Items))
+				for _, pod := range pods.Items {
+					err = r.Delete(context.TODO(), &pod)
+					if err != nil {
+						r.Log.Error(err, "failed to delete pods")
+						return err
+					}
+				}
+				r.Log.Info("deleted pods in deployment")
 			}
 		} else {
 			r.Log.Info("no changes in configmap")
