@@ -1,0 +1,7 @@
+apiVersion: example.meetup.com/v1alpha1
+kind: Presentation
+metadata:
+  name: presentation-sample
+spec:
+  # Add fields here
+  foo: bar

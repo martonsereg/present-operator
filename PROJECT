@@ -1,3 +1,7 @@
 domain: meetup.com
 repo: presentation
+resources:
+- group: example
+  kind: Presentation
+  version: v1alpha1
 version: "2"

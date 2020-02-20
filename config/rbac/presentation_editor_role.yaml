@@ -1,0 +1,26 @@
+# permissions to do edit presentations.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: presentation-editor-role
+rules:
+- apiGroups:
+  - example.meetup.com
+  resources:
+  - presentations
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - example.meetup.com
+  resources:
+  - presentations/status
+  verbs:
+  - get
+  - patch
+  - update
