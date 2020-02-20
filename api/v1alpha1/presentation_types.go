@@ -28,8 +28,9 @@ type PresentationSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Presentation. Edit Presentation_types.go to remove/update
-	Replicas    int `json:"replicas,omitempty"`
-	ServicePort int `json:"servicePort,omitempty"`
+	Replicas    int    `json:"replicas,omitempty"`
+	ServicePort int    `json:"servicePort,omitempty"`
+	Content     string `json:"content,omitempty"`
 }
 
 // PresentationStatus defines the observed state of Presentation

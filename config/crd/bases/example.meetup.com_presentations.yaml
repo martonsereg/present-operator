@@ -34,6 +34,8 @@ spec:
         spec:
           description: PresentationSpec defines the desired state of Presentation
           properties:
+            content:
+              type: string
             replicas:
               description: Foo is an example field of Presentation. Edit Presentation_types.go
                 to remove/update

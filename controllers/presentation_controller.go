@@ -77,10 +77,10 @@ func (r *PresentationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 
 func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presentation) error {
-
+  return nil
 }
 
-func (r *PresentationReconciler) configMap() *apiv1.ConfigMap {
+func (r *PresentationReconciler) configMap(content string) *apiv1.ConfigMap {
 	return &apiv1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "present-content",
@@ -88,23 +88,7 @@ func (r *PresentationReconciler) configMap() *apiv1.ConfigMap {
 			Labels:    labels,
 		},
 		Data: map[string]string{
-			"meetup.slide": `Kubernetes Operators - The basics
-20 Feb 2020
-Tags: k8s, operators, crds, controllers, banzaicloud, kubebuilder
-
-Marton Sereg
-Banzai Cloud
-marton@banzaicloud.com
-
-https://github.com/martonsereg/k8s-meetup
-
-* Definition
-
-Human operators of stateful applications have deep knowledge about how - and when - to run those operations.
-The Operator pattern is a way of capturing that human knowledge. It provides a means for automating those tasks by extending the native Kubernetes API.
-
-* Demo
-`,
+			"meetup.slide": content,
 		},
 	}
 }

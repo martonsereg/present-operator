@@ -6,3 +6,20 @@ spec:
   # Add fields here
   replicas: 1
   servicePort: 80
+  content: |
+    Kubernetes Operators - The basics
+    20 Feb 2020
+    Tags: k8s, operators, crds, controllers, banzaicloud, kubebuilder
+
+    Marton Sereg
+    Banzai Cloud
+    marton@banzaicloud.com
+
+    https://github.com/martonsereg/k8s-meetup
+
+    * Definition
+
+    Human operators of stateful applications have deep knowledge about how - and when - to run those operations.
+    The Operator pattern is a way of capturing that human knowledge. It provides a means for automating those tasks by extending the native Kubernetes API.
+
+    * Demo
