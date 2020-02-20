@@ -75,6 +75,9 @@ func (r *PresentationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 func (r *PresentationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&examplev1alpha1.Presentation{}).
+		Owns(&appsv1.Deployment{}).
+		Owns(&apiv1.ConfigMap{}).
+		Owns(&apiv1.Service{}).
 		Complete(r)
 }
 
