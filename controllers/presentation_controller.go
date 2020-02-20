@@ -45,6 +45,8 @@ type PresentationReconciler struct {
 
 // +kubebuilder:rbac:groups=example.meetup.com,resources=presentations,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=example.meetup.com,resources=presentations/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups="apps",resources=deployments,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=services;configmaps,verbs=get;list;watch;create;update;patch;delete
 
 func (r *PresentationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	_ = context.Background()
