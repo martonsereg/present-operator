@@ -111,6 +111,7 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 			return err
 		}
 	} else {
+		desiredConfigMap.ResourceVersion = currentConfigMap.ResourceVersion
 		if err := r.Update(context.TODO(), desiredConfigMap); err != nil {
 			return err
 		}
@@ -145,6 +146,7 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 			return err
 		}
 	} else {
+		desiredDeployment.ResourceVersion = currentDeployment.ResourceVersion
 		if err := r.Update(context.TODO(), desiredDeployment); err != nil {
 			return err
 		}
@@ -179,6 +181,8 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 			return err
 		}
 	} else {
+		desiredService.ResourceVersion = currentService.ResourceVersion
+		desiredService.Spec.ClusterIP = currentService.Spec.ClusterIP
 		if err := r.Update(context.TODO(), desiredService); err != nil {
 			return err
 		}
