@@ -18,6 +18,7 @@ package controllers
 import (
 	"context"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"reflect"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	"github.com/go-logr/logr"
@@ -112,8 +113,12 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 		}
 	} else {
 		desiredConfigMap.ResourceVersion = currentConfigMap.ResourceVersion
-		if err := r.Update(context.TODO(), desiredConfigMap); err != nil {
-			return err
+		if !reflect.DeepEqual(desiredConfigMap, currentConfigMap) {
+			if err := r.Update(context.TODO(), desiredConfigMap); err != nil {
+				return err
+			}
+		} else {
+			r.Log.Info("no changes in configmap")
 		}
 	}
 
@@ -147,8 +152,12 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 		}
 	} else {
 		desiredDeployment.ResourceVersion = currentDeployment.ResourceVersion
-		if err := r.Update(context.TODO(), desiredDeployment); err != nil {
-			return err
+		if !reflect.DeepEqual(desiredDeployment, currentDeployment) {
+			if err := r.Update(context.TODO(), desiredDeployment); err != nil {
+				return err
+			}
+		} else {
+			r.Log.Info("no changes in deployment")
 		}
 	}
 
@@ -183,8 +192,12 @@ func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presen
 	} else {
 		desiredService.ResourceVersion = currentService.ResourceVersion
 		desiredService.Spec.ClusterIP = currentService.Spec.ClusterIP
-		if err := r.Update(context.TODO(), desiredService); err != nil {
-			return err
+		if !reflect.DeepEqual(desiredService, currentService) {
+			if err := r.Update(context.TODO(), desiredService); err != nil {
+				return err
+			}
+		} else {
+			r.Log.Info("no changes in service")
 		}
 	}
 
