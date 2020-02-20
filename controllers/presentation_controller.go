@@ -79,7 +79,85 @@ func (r *PresentationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 
 func (r *PresentationReconciler) reconcileObjects(config *examplev1alpha1.Presentation) error {
-  return nil
+	desiredConfigMap := r.configMap(config.Spec.Content)
+	desiredConfigMap.Namespace = "default"
+
+	key, err := client.ObjectKeyFromObject(desiredConfigMap)
+	if err != nil {
+		return err
+	}
+
+	currentConfigMap := &apiv1.ConfigMap{}
+
+	err = r.Get(context.TODO(), key, currentConfigMap)
+	if err != nil && !apierrors.IsNotFound(err) {
+		return err
+	}
+	if apierrors.IsNotFound(err) {
+		if err := r.Create(context.TODO(), desiredConfigMap); err != nil {
+			r.Log.Error(err, "failed to reconcile config map")
+			return err
+		}
+	} else {
+		if err := r.Update(context.TODO(), desiredConfigMap); err != nil {
+			return err
+		}
+	}
+
+	r.Log.Info("configmap reconciled")
+
+	desiredDeployment := r.deployment(int32(config.Spec.Replicas))
+	key, err = client.ObjectKeyFromObject(desiredDeployment)
+	if err != nil {
+		return err
+	}
+
+	currentDeployment := &appsv1.Deployment{}
+
+	err = r.Get(context.TODO(), key, currentDeployment)
+	if err != nil && !apierrors.IsNotFound(err) {
+		return err
+	}
+	if apierrors.IsNotFound(err) {
+		if err := r.Create(context.TODO(), desiredDeployment); err != nil {
+			r.Log.Error(err, "failed to reconcile deployment")
+			return err
+		}
+	} else {
+		if err := r.Update(context.TODO(), desiredDeployment); err != nil {
+			return err
+		}
+	}
+
+	r.Log.Info("deployment reconciled")
+
+	desiredService := r.service(int32(config.Spec.ServicePort))
+
+	key, err = client.ObjectKeyFromObject(desiredService)
+	if err != nil {
+		return err
+	}
+
+	currentService := &apiv1.Service{}
+
+	err = r.Get(context.TODO(), key, currentService)
+	if err != nil && !apierrors.IsNotFound(err) {
+		return err
+	}
+	if apierrors.IsNotFound(err) {
+		if err := r.Create(context.TODO(), desiredService); err != nil {
+			r.Log.Error(err, "failed to reconcile service")
+			return err
+		}
+	} else {
+		if err := r.Update(context.TODO(), desiredService); err != nil {
+			return err
+		}
+	}
+
+	r.Log.Info("service reconciled")
+
+	return nil
 }
 
 func (r *PresentationReconciler) configMap(content string) *apiv1.ConfigMap {
